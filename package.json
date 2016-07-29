@@ -32,6 +32,9 @@
     "heroku",
     "nodejs"
   ],
+  "engines": {
+    "node": "6.3.1"
+  },
   "author": "Dmytro Kulikov",
   "license": "ISC",
   "bugs": {

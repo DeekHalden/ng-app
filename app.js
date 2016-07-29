@@ -28,7 +28,6 @@ var feedbackRouter = require('./routes/feedbackRouter');
 
 
 var app = express();
-app.set('port', (process.env.PORT || 5000));
 
 // force ssl
 app.all('*', function (req, res, next) {
@@ -43,7 +42,6 @@ app.all('*', function (req, res, next) {
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
