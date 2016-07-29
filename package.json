@@ -1,5 +1,5 @@
 {
-  "name": "rest",
+  "name": "confusion",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -20,5 +20,22 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.0.0",
     "serve-favicon": "~2.3.0"
-  }
+  },
+  "description": ".                                                                                                                                                                                          .",
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeekHalden/ng-app.git"
+  },
+  "keywords": [
+    "heroku",
+    "nodejs"
+  ],
+  "author": "Dmytro Kulikov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DeekHalden/ng-app/issues"
+  },
+  "homepage": "https://github.com/DeekHalden/ng-app#readme"
 }
