@@ -9,7 +9,7 @@ var Currency = mongoose.Types.Currency;
 
 
 // create a schema
-var leadershipSchema = new Schema({
+var LeadersSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -42,7 +42,7 @@ var leadershipSchema = new Schema({
 
 // the schema is useless so far
 // we need to create a model using it
-var Leaderships = mongoose.model('Leadership', leadershipSchema);
+var Leaders = mongoose.model('Leaders', LeadersSchema);
 
 // make this available to our Node applications
-module.exports = Leaderships;
+module.exports = Leaders;

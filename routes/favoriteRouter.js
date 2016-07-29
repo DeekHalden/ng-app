@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 
 var Favorites = require('../models/favorites');
 
-var Verify = require('./verify'); // i added this and it looks good
+var Verify = require('./verify'); 
 
 var favsRouter = express.Router();
 favsRouter.use(bodyParser.json());
@@ -15,7 +15,7 @@ favsRouter.route('/')
             .populate('postedBy')
             .populate('dishes')
             .exec(function(err, favorites) {
-                if (err) throw err;
+                if (err) return next(err);
 
                 res.json(favorites[0]);
             });
@@ -25,12 +25,12 @@ favsRouter.route('/')
     Favorites.findOne({ "postedBy": req.decoded._id }, function(err, favs) {
         if (!favs) {
             Favorites.create(req.body, function(err, favs) {
-                if (err) throw err;
+                if (err) return next(err);
                 favs.postedBy = req.decoded._id;
                 console.log('Your favorite list has been created!');
                 favs.dishes.push(req.body._id);
                 favs.save(function(err, favs) {
-                    if (err) throw err;
+                    if (err) return next(err);
                     console.log('Dish added');
                     res.json(favs);
                 });
@@ -45,7 +45,7 @@ favsRouter.route('/')
             } else {
                 favs.dishes.push(req.body._id);
                 favs.save(function(err, favs) {
-                    if (err) throw err;
+                    if (err) return next(err);
                     console.log('Dish added to favorites list');
                     res.json(favs);
                 });
@@ -56,7 +56,7 @@ favsRouter.route('/')
 
 .delete(Verify.verifyOrdinaryUser, function(req, res, next) {
     Favorites.remove({ "postedBy": req.decoded._id }, function(err, resp) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(resp);
     });
 });
@@ -64,18 +64,18 @@ favsRouter.route('/')
 favsRouter.route('/:favsId')
     .delete(Verify.verifyOrdinaryUser, function(req, res, next) {
         Favorites.findOne({ postedBy: req.decoded._id }, function(err, favs) {
-            if (err) throw err;
+            if (err) return next(err);
             if (favs) {
                 var index = favs.dishes.indexOf(req.params.favsId);
                 if (index > -1) {
                     favs.dishes.splice(index, 1);
                 }
                 favs.save(function(err, favorite) {
-                    if (err) throw err;
+                    if (err) return next(err);
                     res.json(favorite);
                 });
             } else {
-                var err = new Error('There\' no Favorites');
+                var err = new Error('There are no Favorites');
                 err.status = 401;
                 return next(err);
             }

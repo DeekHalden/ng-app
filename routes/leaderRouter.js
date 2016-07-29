@@ -10,14 +10,14 @@ leaderRouter.use(bodyParser.json());
 leaderRouter.route('/')
 .get(function (req, res, next) {
     Leaders.find({}, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(leader);
     });
 })
 
 .post(function (req, res, next) {
     Leaders.create(req.body, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         console.log('Dish created!');
         var id = leader._id;
 
@@ -30,7 +30,7 @@ leaderRouter.route('/')
 
 .delete(function (req, res, next) {
     Leaders.remove({}, function (err, resp) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(resp);
     });
 });
@@ -38,7 +38,7 @@ leaderRouter.route('/')
 leaderRouter.route('/:leaderId')
 .get(function (req, res, next) {
     Leaders.findById(req.params.leaderId, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(leader);
     });
 })
@@ -49,13 +49,13 @@ leaderRouter.route('/:leaderId')
     }, {
         new: true
     }, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(leader);
     });
 })
 
 .delete(function (req, res, next) {
-    Leaders.findByIdAndRemove(req.params.leaderId, function (err, resp) {        if (err) throw err;
+    Leaders.findByIdAndRemove(req.params.leaderId, function (err, resp) {        if (err) return next(err);
         res.json(resp);
     });
 });
@@ -65,17 +65,17 @@ leaderRouter.route('/:leaderId')
 leaderRouter.route('/:leaderId/comments')
 .get(function (req, res, next) {
     Leaders.findById(req.params.leaderId, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(leader.comments);
     });
 })
 
 .post(function (req, res, next) {
     Leaders.findById(req.params.leaderId, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         leader.comments.push(req.body);
         leader.save(function (err, leader) {
-            if (err) throw err;
+            if (err) return next(err);
             console.log('Updated Comments!');
             res.json(leader);
         });
@@ -84,12 +84,12 @@ leaderRouter.route('/:leaderId/comments')
 
 .delete(function (req, res, next) {
     Leaders.findById(req.params.leaderId, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         for (var i = (leader.comments.length - 1); i >= 0; i--) {
             leader.comments.id(leader.comments[i]._id).remove();
         }
         leader.save(function (err, result) {
-            if (err) throw err;
+            if (err) return next(err);
             res.writeHead(200, {
                 'Content-Type': 'text/plain'
             });
@@ -101,7 +101,7 @@ leaderRouter.route('/:leaderId/comments')
 leaderRouter.route('/:leaderId/comments/:commentId')
 .get(function (req, res, next) {
     Leaders.findById(req.params.leaderId, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(leader.comments.id(req.params.commentId));
     });
 })
@@ -110,11 +110,11 @@ leaderRouter.route('/:leaderId/comments/:commentId')
     // We delete the existing commment and insert the updated
     // comment as a new comment
     Leaders.findById(req.params.leaderId, function (err, leader) {
-        if (err) throw err;
+        if (err) return next(err);
         leader.comments.id(req.params.commentId).remove();
         leader.comments.push(req.body);
         leader.save(function (err, leader) {
-            if (err) throw err;
+            if (err) return next(err);
             console.log('Updated Comments!');
             res.json(leader);
         });
@@ -125,7 +125,7 @@ leaderRouter.route('/:leaderId/comments/:commentId')
     Leaders.findById(req.params.leaderId, function (err, leader) {
         leader.comments.id(req.params.commentId).remove();
         leader.save(function (err, resp) {
-            if (err) throw err;
+            if (err) return next(err);
             res.json(resp);
         });
     });

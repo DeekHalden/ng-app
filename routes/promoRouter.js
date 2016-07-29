@@ -9,16 +9,16 @@ var promoRouter = express.Router();
 promoRouter.use(bodyParser.json());
 
 promoRouter.route('/')
-  .get(Verify.verifyOrdinaryUser, function (req, res, next) {
+  .get(function (req, res, next) {
     Promotions.find({}, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       res.json(promo);
     });
   })
 
   .post(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Promotions.create(req.body, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       console.log('Promo created!');
       var id = promo._id;
 
@@ -31,7 +31,7 @@ promoRouter.route('/')
 
   .delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Promotions.remove({}, function (err, resp) {
-      if (err) throw err;
+      if (err) return next(err);
       res.json(resp);
     });
   });
@@ -39,7 +39,7 @@ promoRouter.route('/')
 promoRouter.route('/:promoId')
   .get(Verify.verifyOrdinaryUser, function (req, res, next) {
     Promotions.findById(req.params.promoId, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       res.json(promo);
     });
   })
@@ -50,14 +50,14 @@ promoRouter.route('/:promoId')
     }, {
       new: true
     }, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       res.json(promo);
     });
   })
 
   .delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Promotions.findByIdAndRemove(req.params.promoId, function (err, resp) {
-      if (err) throw err;
+      if (err) return next(err);
       res.json(resp);
     });
   });
@@ -66,17 +66,17 @@ promoRouter.route('/:promoId')
 promoRouter.route('/:promoId/comments')
   .get(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Promotions.findById(req.params.promoId, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       res.json(promo.comments);
     });
   })
 
   .post(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Promotions.findById(req.params.promoId, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       promo.comments.push(req.body);
       promo.save(function (err, promo) {
-        if (err) throw err;
+        if (err) return next(err);
         console.log('Updated Comments!');
         res.json(promo);
       });
@@ -85,12 +85,12 @@ promoRouter.route('/:promoId/comments')
 
   .delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Promotions.findById(req.params.promoId, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       for (var i = (promo.comments.length - 1); i >= 0; i--) {
         promo.comments.id(promo.comments[i]._id).remove();
       }
       promo.save(function (err, result) {
-        if (err) throw err;
+        if (err) return next(err);
         res.writeHead(200, {
           'Content-Type': 'text/plain'
         });
@@ -102,18 +102,18 @@ promoRouter.route('/:promoId/comments')
 promoRouter.route('/:promoId/comments/:commentId')
   .get(Verify.verifyOrdinaryUser, function (req, res, next) {
     Promotions.findById(req.params.promoId, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       res.json(promo.comments.id(req.params.commentId));
     });
   })
 
   .put(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Promotions.findById(req.params.promoId, function (err, promo) {
-      if (err) throw err;
+      if (err) return next(err);
       promo.comments.id(req.params.commentId).remove();
       promo.comments.push(req.body);
       promo.save(function (err, promo) {
-        if (err) throw err;
+        if (err) return next(err);
         console.log('Updated Comments!');
         res.json(promo);
       });
@@ -124,7 +124,7 @@ promoRouter.route('/:promoId/comments/:commentId')
     Promotions.findById(req.params.promoId, function (err, promo) {
       promo.comments.id(req.params.commentId).remove();
       promo.save(function (err, resp) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(resp);
       });
     });

@@ -24,6 +24,7 @@ var dishRouter = require('./routes/dishRouter');
 var promoRouter = require('./routes/promoRouter');
 var leaderRouter = require('./routes/leaderRouter');
 var favsRouter = require('./routes/favoriteRouter');
+var feedbackRouter = require('./routes/feedbackRouter');
 
 
 var app = express();
@@ -59,6 +60,7 @@ app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter);
 app.use('/leadership', leaderRouter);
 app.use('/favorites', favsRouter);
+app.use('/feedback',feedbackRouter);
 
 
 // catch 404 and forward to error handler

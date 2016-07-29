@@ -3,24 +3,24 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
 var Dishes = require('../models/dishes');
-var Verify    = require('./verify'); // i added this and it looks good
+var Verify    = require('./verify'); 
 
 var dishRouter = express.Router();
 dishRouter.use(bodyParser.json());
 
 dishRouter.route('/')
-.get(Verify.verifyOrdinaryUser, function (req, res, next) {
+.get(function (req, res, next) {
     Dishes.find({})
         .populate('comments.postedBy')
         .exec(function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(dish);
     });
 })
 
 .post(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Dishes.create(req.body, function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         console.log('Dish created!');
         var id = dish._id;
         res.writeHead(200, {
@@ -33,17 +33,17 @@ dishRouter.route('/')
 
 .delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
     Dishes.remove({}, function (err, resp) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(resp);
     });
 });
 
 dishRouter.route('/:dishId')
-.get(Verify.verifyOrdinaryUser, function (req, res, next) {
+.get(function (req, res, next) {
     Dishes.findById(req.params.dishId)
         .populate('comments.postedBy')
         .exec(function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(dish);
     });
 })
@@ -54,37 +54,37 @@ dishRouter.route('/:dishId')
     }, {
         new: true
     }, function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(dish);
     });
 })
 
 .delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
         Dishes.findByIdAndRemove(req.params.dishId, function (err, resp) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(resp);
     });
 });
 
 dishRouter.route('/:dishId/comments')
-.all(Verify.verifyOrdinaryUser)
+
 
 .get(function (req, res, next) {
     Dishes.findById(req.params.dishId)
         .populate('comments.postedBy')
         .exec(function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(dish.comments);
     });
 })
 
-.post(function (req, res, next) {
+.post(Verify.verifyOrdinaryUser, function (req, res, next) {
     Dishes.findById(req.params.dishId, function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         req.body.postedBy = req.decoded._id;
         dish.comments.push(req.body);
         dish.save(function (err, dish) {
-            if (err) throw err;
+            if (err) return next(err);
             console.log('Updated Comments!');
             res.json(dish);
         });
@@ -93,12 +93,12 @@ dishRouter.route('/:dishId/comments')
 
 .delete(Verify.verifyAdmin, function (req, res, next) {
     Dishes.findById(req.params.dishId, function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         for (var i = (dish.comments.length - 1); i >= 0; i--) {
             dish.comments.id(dish.comments[i]._id).remove();
         }
         dish.save(function (err, result) {
-            if (err) throw err;
+            if (err) return next(err);
             res.writeHead(200, {
                 'Content-Type': 'text/plain'
             });
@@ -112,19 +112,19 @@ dishRouter.route('/:dishId/comments/:commentId')
     Dishes.findById(req.params.dishId)
         .populate('comments.postedBy')
         .exec(function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         res.json(dish.comments.id(req.params.commentId));
     });
 })
 
 .put(function (req, res, next) {
     Dishes.findById(req.params.dishId, function (err, dish) {
-        if (err) throw err;
+        if (err) return next(err);
         dish.comments.id(req.params.commentId).remove();
                 req.body.postedBy = req.decoded._id;
         dish.comments.push(req.body);
         dish.save(function (err, dish) {
-            if (err) throw err;
+            if (err) return next(err);
             console.log('Updated Comments!');
             res.json(dish);
         });
@@ -141,7 +141,7 @@ dishRouter.route('/:dishId/comments/:commentId')
         }
         dish.comments.id(req.params.commentId).remove();
         dish.save(function (err, resp) {
-            if (err) throw err;
+            if (err) return next(err);
             res.json(resp);
         });
     });
