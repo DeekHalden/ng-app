@@ -1,4 +1,4 @@
-# ng-app
+# Single Page Application made with Angular 
 
 ##How to use on local machine.
 
