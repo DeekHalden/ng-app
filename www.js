@@ -15,7 +15,7 @@ var fs  = require('fs');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '5000');
 
 app.set('port', port);
 app.set('secPort', port+443);
@@ -40,8 +40,8 @@ server.on('listening', onListening);
  * Create HTTPS server.
  */ 
  var options = {
-  key: fs.readFileSync(__dirname+'/private.key'),
-  cert: fs.readFileSync(__dirname+'/certificate.pem')
+  key: fs.readFileSync('private.key'),
+  cert: fs.readFileSync('certificate.pem')
 };
 
 var secureServer = https.createServer(options,app);
