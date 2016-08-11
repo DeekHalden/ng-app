@@ -13,7 +13,7 @@ $ cd ng-app
 ###Copy-paste to your command prompt:
 
 ```sh
-$ npm install 
+$ npm install && bower install
 $ npm start
 ```
 
